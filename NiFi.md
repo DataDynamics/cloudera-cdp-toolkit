@@ -56,6 +56,15 @@ nifi.sensitive.props.additional.keys=
 # nifi.sensitive.props.key.protected=enc{AES_GCM:...}
 ```
 
+### 관련 주요 설정
+
+| 항목                                   | 위치                | 포맷  | 역할                      | 보안 수준 |
+| ------------------------------------ | ----------------- | --- | ----------------------- | ----- |
+| `nifi.sensitive.props.key`           | `nifi.properties` | 평문  | 민감정보 암호화 키              | ❌ 낮음  |
+| `nifi.sensitive.props.key.protected` | `nifi.properties` | 암호문 | 암호화된 키                  | ✅ 중간  |
+| `nifi.bootstrap.sensitive.key`       | `bootstrap.conf`  | 평문  | protected key 복호화용 루트 키 | ✅ 높음  |
+
+
 ### 주의사항
 
 * Sensitive Key가 바뀌면 기존 `flow.xml.gz` 내 민감 정보는 복호화되지 않음
