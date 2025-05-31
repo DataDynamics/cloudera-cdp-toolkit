@@ -68,9 +68,74 @@ nifi.sensitive.props.additional.keys=
 `flow.xml` 파일에 다음과 같이 sensitive value가 보관
 
 ```
+<controllerService>
+  <id>ab2c93e0-0190-1000-0000-0000025132ac</id>
+  <versionedComponentId>f8e83adf-971e-3d8a-9ec4-016e31caf05a</versionedComponentId>
+  <name>PostgreSQL</name>
+  <comment/>
+  <bulletinLevel>WARN</bulletinLevel>
+  <class>org.apache.nifi.dbcp.HikariCPConnectionPool</class>
+  <bundle>
+    <group>org.apache.nifi</group>
+    <artifact>nifi-dbcp-service-nar</artifact>
+    <version>1.26.0.2.1.7.0-435</version>
+  </bundle>
+  <enabled>true</enabled>
+  <property>
+    <name>hikaricp-connection-url</name>
+    <value>jdbc:postgresql://db.datalake.net/test</value>
+  </property>
+  <property>
+    <name>hikaricp-driver-classname</name>
+    <value>org.postgresql.Driver</value>
+  </property>
+  <property>
+    <name>hikaricp-driver-locations</name>
+    <value>/usr/share/java/postgresql-42.7.3.jar</value>
+  </property>
+  <property>
+    <name>hikaricp-kerberos-user-service</name>
+  </property>
+  <property>
+    <name>hikaricp-username</name>
+    <value>test</value>
+  </property>
+  <property>
+    <name>hikaricp-password</name>
+    <value>enc{601ab598ee5397a3a0fb291da6c1e5e2d7bc02111ee6fc97946d3efb9245597aa0a1aa9a9943e3f1d92aec6f}</value>
+  </property>
+  <property>
+    <name>hikaricp-max-wait-time</name>
+    <value>500 millis</value>
+  </property>
+  <property>
+    <name>hikaricp-max-total-conns</name>
+    <value>10</value>
+  </property>
+  <property>
+    <name>hikaricp-validation-query</name>
+  </property>
+  <property>
+    <name>hikaricp-min-idle-conns</name>
+    <value>10</value>
+  </property>
+  <property>
+    <name>hikaricp-max-conn-lifetime</name>
+    <value>-1</value>
+  </property>
+</controllerService>
 ```
 
-### 관련 에러 메시지
+## 관련 에러 메시지
+
+### `Decryption Failed with Algorithm [AES/GCM/NoPadding]`
+
+`flow.xml` 파일의 인코딩 되어 있는 sensitive value를 decryption하지 못해서 생기는 현상으로 다음의 이유가 있음
+
+* 임의로 sensitive key를 변경
+* Sensitive가 설정되어 있는 NiFi를 제거하고 NiFi 재설치 및 기존 `flow.xml` 파일 그대로 사용
+
+에러 메시지는 다음과 같음
 
 ```
 Failed to start web server... shutting down.
