@@ -173,3 +173,69 @@ Caused by: javax.crypto.AEADBadTagException: Tag mismatch!
 	at org.apache.nifi.encrypt.CipherPropertyEncryptor.decrypt(CipherPropertyEncryptor.java:74)
 	... 22 common frames omitted
 ```
+
+수동으로 설정하기 전에는 이 값은 랜덤으로 생성되기 때문에 decryption 에러가 발생하는 경우 다음의 커맨드로 초기화 해야 함.
+
+* 단, `nifi.properties` `bootstrap.conf` `flow.xml`은 모두 같은 sensitive key를 사용해던 시점의 것을 일치시켜야 함
+* `archive`와 `flow.json.gz`는 다른 디렉토리로 이동시키도록 함
+* `flow.xml`을 재생성하면 이를 복사하고 새로 생성된 `nifi.properties` 파일의 `nifi.sensitive.props.key` 값을 적용하고 NiFi 재시작
+
+```
+# find /opt/cloudera -name encrypt-config.sh -print
+/opt/cloudera/parcels/CFM-2.1.7.0-435/TOOLKIT/bin/encrypt-config.sh
+
+# find /run -name nifi.properties -print
+/run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/nifi.properties
+
+# cat /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/nifi.properties | grep sensitive
+nifi.sensitive.props.additional.keys=
+nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
+nifi.sensitive.props.key=j3Of7JVcFM76SI8U||rfBQU2PNWzpvHxeMYNHqSi0omH17Ne16q4wp43xOm0yAc7rdor1k2lrlPtA6Mw==
+nifi.sensitive.props.key.protected=aes/gcm/256
+nifi.sensitive.props.provider=BC
+
+# find /run -name bootstrap.conf -print
+/run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/bootstrap.conf
+
+# cat /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/bootstrap.conf | grep sensitive
+nifi.bootstrap.sensitive.key=C514EA3A752F95AA5D36F9CF7D74453723555E36F8FE41610635A5F5564E40FA
+
+# /opt/cloudera/parcels/CFM-2.1.7.0-435/TOOLKIT/bin/encrypt-config.sh \
+  -f old_flow.xml.gz \
+  -g flow.xml.gz \
+  -s 1234567890abcdef \
+  -n /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/nifi.properties \
+  -b /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/bootstrap.conf \
+  -o nifi.properties  \
+  -x
+
+# cat nifi.properties | grep sensitive
+nifi.sensitive.props.additional.keys=
+nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
+nifi.sensitive.props.key=/3p5pMscBtUeU8M3||KDc0Wda1ul/FAl0JakbwSuBRb/Gp6W2OJRkHDyMYqXc=
+nifi.sensitive.props.key.protected=aes/gcm/256
+nifi.sensitive.props.provider=BC
+```
+
+어떤 방식으로도 decription 에러가 해결이 안되면 다음의 Python 코드로 `<value>enc{...}</value>` 필드를 모두 지우도록 함
+
+```python
+import xml.etree.ElementTree as ET
+
+def clear_encrypted_values(xml_path, output_path):
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    # 모든 <value> 태그 순회
+    for value_elem in root.iter('value'):
+        if value_elem.text and value_elem.text.strip().startswith('enc{') and value_elem.text.strip().endswith('}'):
+            print(f"Encrypted value found: {value_elem.text.strip()}")
+            value_elem.text = ''
+
+    # 결과 저장
+    tree.write(output_path, encoding='utf-8', xml_declaration=True)
+    print(f"Modified XML saved to: {output_path}")
+
+# 사용 예시
+clear_encrypted_values('input.xml', 'output.xml')
+```
