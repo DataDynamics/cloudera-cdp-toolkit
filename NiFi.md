@@ -226,7 +226,7 @@ nifi.sensitive.props.key.protected=aes/gcm/256
 nifi.sensitive.props.provider=BC
 ```
 
-어떤 방식으로도 decription 에러가 해결이 안되면 다음의 Python 코드로 `<value>enc{...}</value>` 필드를 모두 지우도록 함
+어떤 방식으로도 decryption 에러가 해결이 안되면 다음의 Python 코드로 `<value>enc{...}</value>` 필드를 모두 지우도록 함
 
 ```python
 import xml.etree.ElementTree as ET
