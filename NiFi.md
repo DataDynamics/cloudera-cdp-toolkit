@@ -3,16 +3,32 @@
 ## 설치시 가장 먼저 해야할 일
 
 * JDK 교체 (JDK 1.8 사용 금지, 최소 JDK 11 사용; 이유는 GC)
-* Event Thread 개수 상향 (10 -> 80)
-* Heap Size -> 4~8G
+* Event Thread 개수 상향 (10 ▶ 80)
+  * NiFi ＞ Controller Setting ＞ Event Thread
+* Heap Size ▶ 4~8G
+  * Cloudera : CM > NiFi > Configuration > Initial Memory Allocation / Maximum Memory Allocation
+  * Apache : <NIFI_HOME>/conf/boostrap.conf
 
-## NiFi의 응답이 느려지는 경우 점검
+## NiFi의 응답이 느려지는 경우 점검 항목
 
 * NiFi Logging Level (절대로 DEBUG 사용하지 말 것)
 * NiFi의 Heap Size 부족인지 확인
-* NiFi에서 Flow File이 대량 생성되는 것이 있는지
+* NiFi에서 Flow File이 대량 생성되는 것이 있는지 (데이터에 기인하는 경우가 많음)
   * Partition 생성시 과도한 파티션 생성 (데이터에 따라서 파티션 생성이 달라지므로 대량 생성시 Content Repository Full 발생)
   * FlowFile 대량 생성시 Content Repository에 과도한 Small File 생성
+
+## 기타 사용상 관리 포인트
+
+* 사용하지 않은 Processor, Processor 그룹은 disable 상태로 유지하도록 함
+  * Stop 상태로 유지하는 경우 ▶ 을 눌러서 Start시 전체 Processor, Processor Group이 동작함으로써 운영중 NiFi의 workload가 급격히 증가
+  * Disable 상태로 유지하는 경우 ▶ 을 누르더라도 Start가 되지 않음
+* NiFi ＞ Cluster 메뉴를 통해 NiFi 노드의 JVM Heap의 사용량 모니터링 필요
+* NIFi ＞ Cluster 메뉴에서 실행중인 Thread 개수 확인 (400개를 넘지 않도록 관찰)
+* 공통화 시킬 수 있다면 최대한 NiFi Flow를 공통화
+  * Class의 Instance 생성하듯이 동일한/비슷한 구조의 Flow를 계속 복사해서 구성하는 경우 NiFi의 Heap Size 이슈 발생, Thread 이슈 발생
+* PutKudu를 다수 사용하는 경우
+  * NiFi의 Thread 개수 모니터링 필요 → Kudu Client에서 Worker Thread 개수 확인 (기본값: CPU Core * 2 → 1~2개로 설정하고 우선 사용하고 필요시 개수 증가)
+  * Timestamp 컬럼의 경우 시간이 -9H 한 후에 데이터가 적재됨 → 데이터 조회를 통해 검증 필수
 
 ## Sensitive Key
 
