@@ -205,43 +205,6 @@ Caused by: javax.crypto.AEADBadTagException: Tag mismatch!
 * `archive`와 `flow.json.gz`는 다른 디렉토리로 이동시키도록 함
 * `flow.xml`을 재생성하면 이를 복사하고 새로 생성된 `nifi.properties` 파일의 `nifi.sensitive.props.key` 값을 적용하고 NiFi 재시작
 
-```
-# find /opt/cloudera -name encrypt-config.sh -print
-/opt/cloudera/parcels/CFM-2.1.7.0-435/TOOLKIT/bin/encrypt-config.sh
-
-# find /run -name nifi.properties -print
-/run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/nifi.properties
-
-# cat /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/nifi.properties | grep sensitive
-nifi.sensitive.props.additional.keys=
-nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
-nifi.sensitive.props.key=j3Of7JVcFM76SI8U||rfBQU2PNWzpvHxeMYNHqSi0omH17Ne16q4wp43xOm0yAc7rdor1k2lrlPtA6Mw==
-nifi.sensitive.props.key.protected=aes/gcm/256
-nifi.sensitive.props.provider=BC
-
-# find /run -name bootstrap.conf -print
-/run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/bootstrap.conf
-
-# cat /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/bootstrap.conf | grep sensitive
-nifi.bootstrap.sensitive.key=C514EA3A752F95AA5D36F9CF7D74453723555E36F8FE41610635A5F5564E40FA
-
-# /opt/cloudera/parcels/CFM-2.1.7.0-435/TOOLKIT/bin/encrypt-config.sh \
-  -f old_flow.xml.gz \
-  -g flow.xml.gz \
-  -s 1234567890abcdef \
-  -n /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/nifi.properties \
-  -b /run/cloudera-scm-agent/process/1546416351-nifi-NIFI_NODE/bootstrap.conf \
-  -o nifi.properties  \
-  -x
-
-# cat nifi.properties | grep sensitive
-nifi.sensitive.props.additional.keys=
-nifi.sensitive.props.algorithm=NIFI_PBKDF2_AES_GCM_256
-nifi.sensitive.props.key=/3p5pMscBtUeU8M3||KDc0Wda1ul/FAl0JakbwSuBRb/Gp6W2OJRkHDyMYqXc=
-nifi.sensitive.props.key.protected=aes/gcm/256
-nifi.sensitive.props.provider=BC
-```
-
 어떤 방식으로도 decryption 에러가 해결이 안되면 다음의 Python 코드로 `<value>enc{...}</value>` 필드를 모두 지우도록 함
 
 ```python
