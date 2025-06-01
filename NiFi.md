@@ -6,7 +6,7 @@
 * Event Thread 개수 상향 (10 ▶ 80)
   * NiFi ＞ Controller Setting ＞ Event Thread
 * Heap Size ▶ 4~8G
-  * Cloudera : CM > NiFi > Configuration > Initial Memory Allocation / Maximum Memory Allocation
+  * Cloudera : CM ＞ NiFi ＞ Configuration ＞ Initial Memory Allocation / Maximum Memory Allocation
   * Apache : <NIFI_HOME>/conf/boostrap.conf
 
 ## NiFi의 응답이 느려지는 경우 점검 항목
