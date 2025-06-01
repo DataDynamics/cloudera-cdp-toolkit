@@ -3,9 +3,9 @@
 ## 설치시 가장 먼저 해야할 일
 
 * JDK 교체 (JDK 1.8 사용 금지, 최소 JDK 11 사용; 이유는 GC) → G1GC 권장
-* Event Thread 개수 상향 (10 ▶ 80~100)
+* Event Thread 개수 상향 (10 → 80~100)
   * NiFi ＞ Controller Setting ＞ Event Thread
-* Heap Size ▶ 4~8G
+* Heap Size → 4~8G
   * Cloudera : CM ＞ NiFi ＞ Configuration ＞ Initial Memory Allocation / Maximum Memory Allocation
   * Apache : `<NIFI_HOME>/conf/boostrap.conf`
 
