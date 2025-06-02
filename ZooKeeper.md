@@ -59,3 +59,42 @@ server.2=hdm3.datalake.net:3181:4181
 server.3=hdm1.datalake.net:3181:4181
 leaderServes=yes
 ```
+
+## ZooKeeper CLi
+
+| 명령어                            | 설명                                         |
+| ------------------------------ | ------------------------------------------ |
+| `zkCli.sh`                     | ZooKeeper CLI 실행 (`$ZK_HOME/bin/zkCli.sh`) |
+| `zkCli.sh -server <host:port>` | 특정 ZooKeeper 서버에 CLI로 접속                   |
+| `quit`                         | CLI 종료                                     |
+| `ls /path`   | 해당 경로 하위의 znode 목록 조회                           |
+| `ls2 /path`  | `ls` + znode의 메타정보 (ctime, mtime, version 등) 포함 |
+| `get /path`  | znode의 데이터 값 조회                                 |
+| `stat /path` | znode의 상태 정보(버전, 자식 노드 수 등) 조회                  |
+| `create /path data`    | znode 생성 및 값 설정                      |
+| `create -e /path data` | **ephemeral** znode 생성 (세션 종료 시 삭제됨) |
+| `create -s /path data` | **sequential** znode 생성 (번호 자동 부여)   |
+| `set /path data`       | 기존 znode의 값을 수정                      |
+| `delete /path`         | znode 삭제                             |
+| `deleteall /path`      | 하위 znode 포함하여 재귀적으로 삭제               |
+| `get /path true` | 해당 znode 변경에 대한 watch 설정    |
+| `ls /path true`  | 하위 znode 목록 변경에 대한 watch 설정 |
+
+다음과 같이 CLI를 실행할 수 있음
+
+```
+# ZooKeeper CLI 접속
+$ zkCli.sh -server localhost:2181
+
+# znode 생성
+[zk: localhost:2181] create /config "mydata"
+
+# 데이터 조회
+[zk: localhost:2181] get /config
+
+# 데이터 수정
+[zk: localhost:2181] set /config "newdata"
+
+# 삭제
+[zk: localhost:2181] delete /config
+```
