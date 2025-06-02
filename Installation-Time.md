@@ -1,56 +1,20 @@
 # Time Synchronization
 
-## NTP & Chrony 비교
+## Cloudera CDP에서 Raft를 사용하는 Runtime Component
 
-### 기능적 비교
+* Cloudera CDP의 Runtime Component 중 Raft Algorithm을 기반으로 동작하는 컴포넌트가 존재함
+* Raft Algorithm을 사용하는 컴포넌트는 시간 동기화가 매우 중요하므로 이에 대해서 기술적 이해가 필요함
 
-| 항목    | `chrony`                       | `ntpd` (NTP)                   |
-| ----- | ------------------------------ | ------------------------------ |
-| 주요 데몬 | `chronyd`                      | `ntpd`                         |
-| 프로토콜  | NTP (Network Time Protocol) 사용 | NTP (Network Time Protocol) 사용 |
-| 등장 시기 | 2010년 이후 (경량, 정확도 향상 목적)       | 1980년대 후반 (오래된 구현체)            |
-| 정확도   | 더 빠른 동기화, 더 높은 정확도             | 상대적으로 느림                       |
-| 패키지명  | `chrony`                       | `ntp` 또는 `ntpdate`             |
+| 컴포넌트         | Raft 사용 여부   | 설명                                 |
+| --------------- | --------------- | ------------------------------------ |
+| **Apache Kudu** | ✅ Yes         | Raft 기반 Tablet 복제 및 리더 선출     |
+| Apache HDFS     | ❌ No          | Raft 미사용, Zookeeper + NameNode     |
+| Apache Hive     | ❌ No          | RDB 기반, consensus 없음              |
+| Apache Impala   | ❌ No          | Catalog 서비스 내장, Raft 미사용       |
+| Apache Kafka    | ✅ Yes         | ZooKeeper, Raft 선택 가능             |
+| Apache Ozone    | ✅ (선택적)     | Apache Ratis 기반 Raft 사용          |
 
-### 기술적 비교
-
-| 항목                | `chrony`                | `ntpd`             |
-| ----------------- | ----------------------- | ------------------ |
-| 동기화 속도            | 매우 빠르게 시간 동기화           | 느리게 점진적으로 동기화      |
-| 배터리 없는 장비 (IoT 등) | 부팅 후 빠르게 시간 복원 가능       | 부팅 후 시간이 어긋날 수 있음  |
-| 오프라인 동기화          | 로컬 RTC(하드웨어 시계)와의 연동 우수 | RTC와의 정확한 동기화가 어려움 |
-| 네트워크 지연 보정        | 빠르게 반영                  | 보정이 느림             |
-| 시간 서버로의 사용        | 가능                      | 가능                 |
-| Leap Second 보정    | 자동 반영 가능                | 반영에는 설정이 필요        |
-
-
-### 설정 파일 비교
-
-| 항목       | chrony                                | ntpd                            |
-| -------- | ------------------------------------- | ------------------------------- |
-| 기본 설정 파일 | `/etc/chrony.conf`                    | `/etc/ntp.conf`                 |
-| 서버 설정    | `server time.bora.net iburst` 등       | `server time.bora.net iburst` 등 |
-| 상태 확인    | `chronyc tracking`, `chronyc sources` | `ntpq -p`, `ntpstat`            |
-
-
-### OS 버전별 비교
-
-| OS            | 기본 시간 동기화 도구                              |
-| ------------- | ----------------------------------------- |
-| RHEL 7        | `chrony`                                  |
-| RHEL 8/9      | `chrony`                                  |
-| Ubuntu 18.04+ | `systemd-timesyncd` (기본), `chrony`도 자주 사용 |
-| Debian        | `ntp` 또는 `chrony` 선택 가능                   |
-
-
-### 요약
-
-| 용도                        | 추천 도구                        |
-| ------------------------- | ---------------------------- |
-| 최신 시스템, 빠른 시간 보정 필요       | ✅ **chrony**                 |
-| 기존 레거시 시스템, 오랜 운용 경험      | ❗ **ntpd** (단, 유지 중단 가능성 있음) |
-| 서버가 자주 재부팅되거나 오프라인 주기적 발생 | ✅ **chrony**                 |
-
+추가로 Kerberos 또한 시간이 중요함
 
 ## Raft Algorithm과 시간 동기화
 
@@ -97,14 +61,52 @@
 | Clock Drift      | 초당 <10ms 정도 오차 이하로 유지          |
 | 시스템 부하           | GC나 디스크 IO 과부하로 타이머 지연 방지      |
 
-## Cloudera CDP에서 Raft를 사용하는 Runtime Component
+## NTP & Chrony 비교
 
-| 컴포넌트         | Raft 사용 여부   | 설명                                 |
-| --------------- | --------------- | ------------------------------------ |
-| **Apache Kudu** | ✅ Yes         | Raft 기반 Tablet 복제 및 리더 선출     |
-| Apache HDFS     | ❌ No          | Raft 미사용, Zookeeper + NameNode     |
-| Apache Hive     | ❌ No          | RDB 기반, consensus 없음              |
-| Apache Impala   | ❌ No          | Catalog 서비스 내장, Raft 미사용       |
-| Apache Kafka    | ✅ Yes         | ZooKeeper, Raft 선택 가능             |
-| Apache Ozone    | ✅ (선택적)     | Apache Ratis 기반 Raft 사용          |
+### 기능적 비교
 
+| 항목    | `chrony`                       | `ntpd` (NTP)                   |
+| ----- | ------------------------------ | ------------------------------ |
+| 주요 데몬 | `chronyd`                      | `ntpd`                         |
+| 프로토콜  | NTP (Network Time Protocol) 사용 | NTP (Network Time Protocol) 사용 |
+| 등장 시기 | 2010년 이후 (경량, 정확도 향상 목적)       | 1980년대 후반 (오래된 구현체)            |
+| 정확도   | 더 빠른 동기화, 더 높은 정확도             | 상대적으로 느림                       |
+| 패키지명  | `chrony`                       | `ntp` 또는 `ntpdate`             |
+
+### 기술적 비교
+
+| 항목                | `chrony`                | `ntpd`             |
+| ----------------- | ----------------------- | ------------------ |
+| 동기화 속도            | 매우 빠르게 시간 동기화           | 느리게 점진적으로 동기화      |
+| 배터리 없는 장비 (IoT 등) | 부팅 후 빠르게 시간 복원 가능       | 부팅 후 시간이 어긋날 수 있음  |
+| 오프라인 동기화          | 로컬 RTC(하드웨어 시계)와의 연동 우수 | RTC와의 정확한 동기화가 어려움 |
+| 네트워크 지연 보정        | 빠르게 반영                  | 보정이 느림             |
+| 시간 서버로의 사용        | 가능                      | 가능                 |
+| Leap Second 보정    | 자동 반영 가능                | 반영에는 설정이 필요        |
+
+### 설정 파일 비교
+
+| 항목       | chrony                                | ntpd                            |
+| -------- | ------------------------------------- | ------------------------------- |
+| 기본 설정 파일 | `/etc/chrony.conf`                    | `/etc/ntp.conf`                 |
+| 서버 설정    | `server time.bora.net iburst` 등       | `server time.bora.net iburst` 등 |
+| 상태 확인    | `chronyc tracking`, `chronyc sources` | `ntpq -p`, `ntpstat`            |
+
+`iburst` 옵션은 시간 동기화를 빠르게 시작하기 위한 초기 가속화 옵션으로 NTP 시작시 1초 간격으로 천천히 요청하는 대신 짧은 시간 안에 여러번 요청하는 방식으로 동기화를 수행하며, 동기화 속도도 수초~10초 이내로 빠르게 동기화를 수행
+
+### OS 버전별 비교
+
+| OS            | 기본 시간 동기화 도구                              |
+| ------------- | ----------------------------------------- |
+| RHEL 7        | `chrony`                                  |
+| RHEL 8/9      | `chrony`                                  |
+| Ubuntu 18.04+ | `systemd-timesyncd` (기본), `chrony`도 자주 사용 |
+| Debian        | `ntp` 또는 `chrony` 선택 가능                   |
+
+### 요약
+
+| 용도                        | 추천 도구                        |
+| ------------------------- | ---------------------------- |
+| 최신 시스템, 빠른 시간 보정 필요       | ✅ **chrony**                 |
+| 기존 레거시 시스템, 오랜 운용 경험      | ❗ **ntpd** (단, 유지 중단 가능성 있음) |
+| 서버가 자주 재부팅되거나 오프라인 주기적 발생 | ✅ **chrony**                 |
