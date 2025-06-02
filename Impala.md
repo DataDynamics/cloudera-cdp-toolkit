@@ -2,7 +2,7 @@
 
 ## Coordinator Role
 
-* CM > Impala > Instances > Role Groups
+* CM ＞ Impala ＞ Instances ＞ Role Groups
   * Role Group 생성
     * Create Role Group ＞ IMPALA_COORDINATOR_ONLY
     * Create Role Group ＞ IMPALA_EXECUTOR_ONLY
