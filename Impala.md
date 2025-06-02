@@ -58,6 +58,16 @@
 | `--invalidate_tables_on_memory_pressure` | `true`    |                 |
 | `--invalidate_tables_timeout_s`          | `86400`   |                 |
 
+## Kudu 관련 옵션
+
+| 항목                                     | 기본값      | 설명            |
+| ---------------------------------------- | ---------- | --------------- |
+| `--kudu_operation_timeout_ms`            | `180000`   |  Timeout (milliseconds) set for all Kudu operations. This must be a positive value, and there is no way to disable timeouts. |
+| `--kudu_error_buffer_size`               | `10485760` |  The size (bytes) of the Kudu client buffer for returning errors, with a min of 1KB.If the actual errors exceed this size the query will fail. |
+| `--kudu_mutation_buffer_size`            | `10485760` |  The size (bytes) of the Kudu client buffer for mutations. |
+| `--kudu_scanner_keep_alive_period_sec`   | `15`       |  The period at which Kudu Scanners should send keep-alive requests to the tablet server to ensure that scanners do not time out. |
+| `--kudu_max_row_batches`                 | `0`        |  The maximum size of the row batch queue, for Kudu scanners.  |
+
 ## 트러블 슈팅
 
 ### max allowed lag is 720000ms
