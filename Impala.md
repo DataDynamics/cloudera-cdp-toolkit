@@ -31,27 +31,19 @@
 
 ### Impala Daemon 옵션
 
-| 항목                                   | 위치                | 포맷  | 역할                      | 보안 수준 |
-| ------------------------------------ | ----------------- | --- | ----------------------- | ----- |
-| `nifi.sensitive.props.key`           | `nifi.properties` | 평문  | 민감정보 암호화 키              | ❌ 낮음  |
-| `nifi.sensitive.props.key.protected` | `nifi.properties` | 암호문 | 암호화된 키                  | ✅ 중간  |
-| `nifi.bootstrap.sensitive.key`       | `bootstrap.conf`  | 평문  | protected key 복호화용 루트 키 | ✅ 높음  |
-
-
+| 항목                                     | 기본값     | 설명            |
+| ---------------------------------------- | --------- | --------------- |
+| `--catalog_topic_mode`                   | `minimal` |                 |
 
 ### Impala StateStore 옵션
 
-| 항목                                   | 위치                | 포맷  | 역할                      | 보안 수준 |
-| ------------------------------------ | ----------------- | --- | ----------------------- | ----- |
-| `nifi.sensitive.props.key`           | `nifi.properties` | 평문  | 민감정보 암호화 키              | ❌ 낮음  |
-| `nifi.sensitive.props.key.protected` | `nifi.properties` | 암호문 | 암호화된 키                  | ✅ 중간  |
-| `nifi.bootstrap.sensitive.key`       | `bootstrap.conf`  | 평문  | protected key 복호화용 루트 키 | ✅ 높음  |
-
-
+| 항목                                     | 기본값     | 설명            |
+| ---------------------------------------- | --------- | --------------- |
+| `--catalog_topic_mode`                   | `minimal` |                 |
 
 ### Impala Catalog 옵션
 
-| 항목                                     | 위치       | 포맷            |
+| 항목                                     | 기본값     | 설명            |
 | ---------------------------------------- | --------- | --------------- |
 | `--catalog_topic_mode`                   | `minimal` |                 |
 | `--num_metadata_loading_threads`         | `64`      |                 |
@@ -60,6 +52,8 @@
 
 ## Kudu 관련 옵션
 
+http://<COORDINATOR>:25000/varz에 접속하여 적용된 파라미터를 확인하고 필요시 이 값들을 수정하도록 함. 특히 Kudu 작업이 많아지면 지연이 발생하는 경우 `--kudu_operation_timeout_ms` 제한에 걸려서 operation fail이 발생할 수 있음.
+
 | 항목                                     | 기본값      | 설명            |
 | ---------------------------------------- | ---------- | --------------- |
 | `--kudu_operation_timeout_ms`            | `180000`   |  Timeout (milliseconds) set for all Kudu operations. This must be a positive value, and there is no way to disable timeouts. |
@@ -67,6 +61,15 @@
 | `--kudu_mutation_buffer_size`            | `10485760` |  The size (bytes) of the Kudu client buffer for mutations. |
 | `--kudu_scanner_keep_alive_period_sec`   | `15`       |  The period at which Kudu Scanners should send keep-alive requests to the tablet server to ensure that scanners do not time out. |
 | `--kudu_max_row_batches`                 | `0`        |  The maximum size of the row batch queue, for Kudu scanners.  |
+
+## 성능 모니터링
+
+* http://<COORDINATOR>:25000/memz
+  * Memory Usage 확인 (중요!!)
+* http://<COORDINATOR>:25000/sessions
+  * 접속한 사용자 확인
+* http://<COORDINATOR>:25000/queries
+  * 실행중인 쿼리의 실행 상태 확인
 
 ## 트러블 슈팅
 
