@@ -110,3 +110,79 @@
 | 최신 시스템, 빠른 시간 보정 필요       | ✅ **chrony**                 |
 | 기존 레거시 시스템, 오랜 운용 경험      | ❗ **ntpd** (단, 유지 중단 가능성 있음) |
 | 서버가 자주 재부팅되거나 오프라인 주기적 발생 | ✅ **chrony**                 |
+
+## Chrony 설치
+
+### 패키지 설치
+
+```
+dnf install -y chrony
+systemctl enable --now chronyd
+systemctl status chronyd
+```
+
+### Chrony 설정
+
+`/etc/chrony.conf` 설정 파일을 다음과 같이 수정하도록 함
+
+```
+# 시간 동기화할 NTP 서버 설정
+server time1.kisa.re.kr iburst
+server time2.kornet.net iburst
+
+# 시스템 클럭이 너무 틀렸을 때 바로 동기화
+makestep 1.0 3
+
+# 로컬에 시간 제공 허용 (선택적)
+allow 192.168.0.0/16
+
+# 로컬 RTC (하드웨어 클럭) 기록
+driftfile /var/lib/chrony/drift
+
+# 로그 디렉토리
+logdir /var/log/chrony
+```
+
+| 옵션          | 설명                                           |
+| ----------- | -------------------------------------------- |
+| `server`    | 동기화할 NTP 서버. `iburst` 옵션으로 빠른 초기 동기화         |
+| `makestep`  | 클럭이 많이 틀렸을 경우 NTP time으로 "즉시 조정" (보통 부팅 초기용) |
+| `allow`     | 다른 클라이언트가 이 서버를 NTP 서버로 사용하도록 허용             |
+| `driftfile` | 로컬 하드웨어 클럭의 오차 저장                            |
+| `logdir`    | 로그 저장 위치                                     |
+
+### 방화벽 개방
+
+```
+sudo firewall-cmd --add-service=ntp --permanent
+sudo firewall-cmd --reload
+```
+
+### 수동 동기화
+
+```
+chronyc makestep
+```
+
+특정 서버와 강제 동기화
+
+```
+chronyd -q 'server time.bora.net iburst'
+```
+
+### 동기화 상태 확인
+
+```
+chronyc tracking       # 현재 시간 오차, 지연 등 확인
+chronyc sources -v     # 동기화 중인 서버와 응답 상태 확인
+
+MS Name/IP address     Stratum Poll Reach LastRx Last sample
+===============================================================================
+^* time1.kisa.re.kr          2   6   377   15   -0.123 +0.004  0.002
+```
+
+### 하드웨어 클럭(HW clock)도 동기화
+
+```
+hwclock --systohc
+```
