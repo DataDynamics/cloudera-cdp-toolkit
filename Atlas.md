@@ -2,7 +2,7 @@
 
 ## 의존 서비스
 
-Atlas가 동작하기 위해서 필요한 서비스
+Atlas가 동작하기 위해서 필요한 서비스이며 Ranger의 TagSync를 적용하려면 Atlas가 필요함 (예; Tag 기반 Column Masking)
 
 * HDFS
 * HBase
