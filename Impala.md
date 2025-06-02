@@ -71,6 +71,22 @@ http://<COORDINATOR>:25000/varz에 접속하여 적용된 파라미터를 확인
 * http://<COORDINATOR>:25000/queries
   * 실행중인 쿼리의 실행 상태 확인
 
+## HAProxy L4 설정
+
+`/etc/haproxy/haproxy.cfg`
+
+```
+listen impala-jdbc
+  bind *:21050
+  timeout client 60m
+  timeout server 60m
+  option tcplog
+  baalnce source
+  
+  server impala_1 hdw1:21050 check
+  server impala_2 hdw2:21050 check
+```
+
 ## 트러블 슈팅
 
 ### max allowed lag is 720000ms
