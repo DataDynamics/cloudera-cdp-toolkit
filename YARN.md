@@ -180,3 +180,44 @@ Impala와 Iceberg를 사용한다면 Parquet가 기본 포맷이 될 수 있음
 | Parquet  | Spark/Hive 겸용 가능, splitable, block size 기반. Impala, Iceberg의 기본 파일 포맷 |
 | TEXTFILE | splitable 하지만 small file 병합 어려움            |
 
+## YARN CLI
+
+### 주요 CLI 정리
+
+| 명령어                                                        | 설명                                           |              |
+| ---------------------------------------------------------- | -------------------------------------------- | ------------ |
+| `yarn application -list`                                   | 실행 중인 애플리케이션 목록 표시                           |              |
+| `yarn application -status <app_id>`                        | 특정 애플리케이션의 상세 정보 확인                          |              |
+| `yarn application -kill <app_id>`                          | 실행 중인 애플리케이션 강제 종료                           |              |
+| `yarn application -list -appStates <STATE>`                | 지정된 상태의 애플리케이션 조회 (예: `RUNNING`, `FINISHED`) |              |
+| `yarn logs -applicationId <app_id>`                        | 애플리케이션 로그 확인 (stdout, stderr 포함)             |              |
+| `yarn logs -applicationId <app_id> -appOwner <user>`       | 다른 사용자의 애플리케이션 로그 조회                         |              |
+| `yarn node -list`                 | 클러스터의 모든 NodeManager 리스트 출력                   |
+| `yarn node -status <node_id>`     | 특정 노드의 상태, 리소스, 컨테이너 정보 확인                    |
+| `yarn node -all`                  | 전체 노드 상태 포함 (비활성 등)                           |
+| `yarn node -list -states <state>` | 특정 상태 노드 필터링 (e.g., RUNNING, LOST, UNHEALTHY) |
+| `yarn cluster`         | 클러스터 요약 정보 (Node 수, Memory, Containers 등) |
+| `yarn cluster -status` | ResourceManager의 상태 (active/standby 등)    |
+| `yarn top`             | 애플리케이션별 리소스 사용량 Top 목록 실시간 확인 (버전 3.x 이상) |
+| `yarn queue -status <queue_name>`         | 특정 YARN 큐의 리소스, 상태, 접근 제어 정보 확인                          |
+| `yarn schedulerconf -list`                | Scheduler에 등록된 queue 설정 리스트 출력 (Capacity Scheduler 사용 시) |
+| `yarn schedulerconf -status <queue_name>` | 큐별 상세 설정 정보 확인                                           |
+| `yarn timelineService v.2.0` | 애플리케이션 시간 정보(Timeline) 활용 (v2 TS가 활성화되어야 함) |
+
+
+### Application 관련 CLI
+
+| 목적                         | 명령어                                                 | 설명                              |
+| -------------------------- | --------------------------------------------------- | ------------------------------- |
+| 전체 실행 중 애플리케이션 목록          | `yarn application -list`                            | 현재 클러스터에서 실행 중인 애플리케이션 표시       |
+| 특정 상태 필터링                  | `yarn application -list -appStates RUNNING`         | 실행 중인 애플리케이션만 표시                |
+| 여러 상태 필터링                  | `yarn application -list -appStates FINISHED,KILLED` | 지정한 상태의 애플리케이션 조회               |
+| 특정 사용자 필터링                 | `yarn application -list -user <username>`           | 해당 사용자의 애플리케이션만 표시              |
+| 애플리케이션 상세 정보               | `yarn application -status <application_id>`         | Application ID에 해당하는 상세 정보 출력   |
+| 애플리케이션 강제 종료               | `yarn application -kill <application_id>`           | 실행 중인 애플리케이션 종료                 |
+| 애플리케이션 로그 조회               | `yarn logs -applicationId <application_id>`         | 실행된 애플리케이션의 stdout/stderr 로그 출력 |
+| 다른 사용자 로그 조회               | `yarn logs -applicationId <id> -appOwner <user>`    | 다른 사용자의 애플리케이션 로그 보기            |
+| 로그 파일 타입 지정                | `yarn logs -applicationId <id> -log_files stdout`   | 특정 로그 파일(stdout/stderr)만 출력     |
+| 모든 상태 포함해서 목록 조회           | `yarn application -list -appStates ALL`             | 모든 상태의 애플리케이션 조회                |
+| ResourceManager 재시작 이후도 포함 | `yarn application -list -include-all`               | 완료된 애플리케이션까지 전체 목록 조회           |
+
