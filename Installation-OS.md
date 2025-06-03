@@ -2,6 +2,8 @@
 
 ## SELinux
 
+Hadoop Cluster를 구성하는 모든 노드는 SELinux를 영구히 disable 해야함
+
 ### SELinux의 일시 Disable
 
 ```
