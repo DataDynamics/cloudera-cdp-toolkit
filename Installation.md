@@ -22,6 +22,19 @@ https://supportmatrix.cloudera.com 에서 설치할 Cloudera CDP의 버전에 �
 | Cloudera CFM      | 2.1                         | Cloudera Support Matrix                |
 | JDK               | JDK 17                      | Cloudera Support Matrix                |
 
+* PostgreSQL : https://www.postgresql.org/download/
+* MariaDB : https://mariadb.org/download/
+* JDK : https://adoptium.net/temurin/releases/?os=any&arch=any&version=21
+
+RHEL 7/8/9의 내장 Python과 JDK 버전
+
+| RHEL 버전    | 기본 Python 버전                         | 기본 JDK 버전           | 비고                                       |
+| ---------- | ------------------------------------ | ------------------- | ---------------------------------------- |
+| **RHEL 7** | Python 2.7                           | OpenJDK 8 (`1.8.0`) | Python 3는 기본 미포함, 수동 설치 필요               |
+| **RHEL 8** | Python 3.6 (기본),<br>Python 2.7 (호환용) | OpenJDK 11          | Python 3.8 및 JDK 8/17도 AppStream으로 설치 가능 |
+| **RHEL 9** | Python 3.9                           | OpenJDK 17          | Python 3.11 및 JDK 11/21 선택 설치 가능         |
+
+
 ### Active Directory
 
 | 구분           |         |
