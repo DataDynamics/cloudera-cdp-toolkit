@@ -9,12 +9,18 @@
 | DNS 서버 주소      | 10.0.1.1                   |
 | AD 서버 주소       | 10.0.1.2                   |
 | OS YUM Repository | /etc/yum.repos.d/rhel.repo |
-| Python 버전       | Python 3.9                  |
-| Database 버전     | PostgreSQL 16               |
-| Cloudera Manager  | 7.11.0                      |
-| Cloudera CDP      | 7.1.9.SP1                   |
-| Cloudera CDS 3    | 3.1                         |
-| Cloudera CFM      | 2.1                         |   
+
+https://supportmatrix.cloudera.com 에서 설치할 Cloudera CDP의 버전에 따라서 OS 및 Database 등의 설치 요건을 확인하도록 함
+
+| 구분               | 예시                       | 확인 위치                               |
+|--------------------|---------------------------|-----------------------------------------|
+| Python 버전       | Python 3.9                  | Cloudera Documentation (Installation)  |
+| Database 버전     | PostgreSQL 16               | Cloudera Support Matrix                |
+| Cloudera Manager  | 7.11.0                      | Cloudera Support Matrix                |
+| Cloudera CDP      | 7.1.9.SP1                   | Cloudera Support Matrix                |
+| Cloudera CDS 3    | 3.1                         | Cloudera Support Matrix                |
+| Cloudera CFM      | 2.1                         | Cloudera Support Matrix                |
+| JDK               | JDK 17                      | Cloudera Support Matrix                |
 
 ### Active Directory
 
