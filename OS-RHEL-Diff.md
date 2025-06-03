@@ -1,5 +1,10 @@
 # RHEL OS Version 별 비교
 
+- [RHEL OS Version 별 비교](#rhel-os-version-별-비교)
+  - [RHEL 7](#rhel-7)
+  - [RHEL 8](#rhel-8)
+  - [RHEL 9](#rhel-9)
+
 ## RHEL 7
 
 🔒 EOL (End of Full Support): 2024-06-30

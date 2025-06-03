@@ -1,5 +1,24 @@
 # YARN
 
+- [YARN](#yarn)
+  - [YARN의 3대 핵심 컴포넌트](#yarn의-3대-핵심-컴포넌트)
+  - [Map/Reduce Task와 Container 개념](#mapreduce-task와-container-개념)
+  - [YARN의 주요 파라미터](#yarn의-주요-파라미터)
+  - [Container Memory와 MapReduce Task Memory의 관계](#container-memory와-mapreduce-task-memory의-관계)
+  - [vCore와 관계 및 개념](#vcore와-관계-및-개념)
+  - [파라미터 설정시 이해해야 하는 개념](#파라미터-설정시-이해해야-하는-개념)
+  - [Small File의 대처 방안](#small-file의-대처-방안)
+  - [Hive에서 Small File 대처](#hive에서-small-file-대처)
+    - [CombineHiveInputFormat 사용](#combinehiveinputformat-사용)
+    - [INSERT OVERWRITE](#insert-overwrite)
+    - [File Merge (Compaction) for ORC, ACID](#file-merge-compaction-for-orc-acid)
+    - [MapReduce 병렬성 제어](#mapreduce-병렬성-제어)
+    - [Partition 병합](#partition-병합)
+    - [테이블 저장 포맷](#테이블-저장-포맷)
+  - [YARN CLI](#yarn-cli)
+    - [주요 CLI 정리](#주요-cli-정리)
+    - [Application 관련 CLI](#application-관련-cli)
+
 ## YARN의 3대 핵심 컴포넌트
 
 YARN을 구성하는 핵심 컴포넌트는 다음의 3개임
