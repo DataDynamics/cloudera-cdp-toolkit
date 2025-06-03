@@ -186,3 +186,28 @@ MS Name/IP address     Stratum Poll Reach LastRx Last sample
 ```
 hwclock --systohc
 ```
+
+## 동기화 에러 확인 방법
+
+### `/var/log/messages`의 동기화 관련 에러 메시지
+
+| 메시지                                                               | 의미 및 원인                                             |
+| ----------------------------------------------------------------- | --------------------------------------------------- |
+| `chronyd[PID]: Can't synchronise: no reachable sources`           | ❗ **NTP 서버에 도달할 수 없음** (네트워크 차단, DNS 오류, 서버 다운 등)   |
+| `chronyd[PID]: Source X.X.X.X unreachable`                        | 해당 NTP 서버로부터 응답이 오지 않음 (IP 또는 방화벽 문제)               |
+| `chronyd[PID]: Selected source X.X.X.X appears to be falseticker` | 서버가 **부정확한 시간**을 제공 중                               |
+| `chronyd[PID]: Can't synchronise: clock stepped too far`          | 시스템 시간이 서버와 너무 차이 나서 **자동 동기화 포기** (makestep 설정 필요) |
+| `chronyd[PID]: System clock wrong by N seconds`                   | 현재 시간 오차가 N초 (makestep 조건 초과)                       |
+| `chronyd[PID]: NTP packet received from X.X.X.X is invalid`       | NTP 응답 패킷이 잘못되었거나 조작된 것                             |
+| `chronyd[PID]: Name or service not known`                         | DNS 문제로 NTP 호스트 이름을 해석 못 함                          |
+| `chronyd[PID]: Could not resolve hostname time.example.com`       | DNS 미설정, `resolv.conf` 오작동 등                        |
+| `chronyd[PID]: System clock was stepped by N seconds`             | 시간 오차가 너무 커서 **강제 시간 보정 수행됨**                       |
+
+### 로그로 확인이 안되는 경우
+
+* rsyslog가 꺼져있거나, `/var/log/messages`가 비활성화시 로그 확인 불가
+  * `systemctl status rsyslog` 로 rsyslog 동작 확인 --> `systemctl enable --now rsyslog`
+  * `vi /etc/rsyslog.conf ` 또는 `vi /etc/rsyslog.d/50-default.conf`
+    * `*.info;mail.none;authpriv.none;cron.none                /var/log/messages` 포함되어야 함
+* journald로만 기록되는 경우 `journalctl -u chronyd` 커맨드 사용
+
