@@ -158,4 +158,7 @@ listen stats
     stats realm HAProxy\ Statistics
     stats auth admin:admin123     # 사용자/비밀번호
     stats admin if TRUE           # Enable web admin
+    timeout connect 5000
+    timeout client  5000
+    timeout server  5000
 ```
