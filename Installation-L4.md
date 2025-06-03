@@ -146,11 +146,11 @@ WantedBy=multi-user.target
 
 ### Statistics Web Admin 활성화
 
-기본 `/etc/haproxy.cfg` 파일에 다음을 추가하고 HAProxy를 재시작하도록 하며 http://<haproxy-ip>:8404/stats 접속을 통해 HAProxy의 로드 밸런싱 처리 현황을 확인할 수 있음
+기본 `/etc/haproxy.cfg` 파일에 다음을 추가하고 HAProxy를 재시작하도록 하며 http://<haproxy-ip>:9000/stats 접속을 통해 HAProxy의 로드 밸런싱 처리 현황을 확인할 수 있음
 
 ```
 listen stats
-    bind *:8404
+    bind *:9000
     mode http
     stats enable
     stats uri /stats
