@@ -155,7 +155,7 @@ listen stats
     stats enable
     stats uri /stats
     stats refresh 10s
-    stats realm Haproxy\ Statistics
+    stats realm HAProxy\ Statistics
     stats auth admin:admin123     # 사용자/비밀번호
     stats admin if TRUE           # Enable web admin
 ```
