@@ -1,5 +1,29 @@
 # Time Synchronization
 
+- [Time Synchronization](#time-synchronization)
+  - [Cloudera CDP에서 Raft를 사용하는 Runtime Component](#cloudera-cdp에서-raft를-사용하는-runtime-component)
+  - [Raft Algorithm과 시간 동기화](#raft-algorithm과-시간-동기화)
+    - [Raft에서 "시간"이 사용되는 주요 지점](#raft에서-시간이-사용되는-주요-지점)
+    - [시간 동기화가 중요한 이유](#시간-동기화가-중요한-이유)
+    - [Raft는 절대적인 "시계 동기화"를 요구하지 않음](#raft는-절대적인-시계-동기화를-요구하지-않음)
+    - [결론](#결론)
+  - [NTP \& Chrony 비교](#ntp--chrony-비교)
+    - [기능적 비교](#기능적-비교)
+    - [기술적 비교](#기술적-비교)
+    - [설정 파일 비교](#설정-파일-비교)
+    - [OS 버전별 비교](#os-버전별-비교)
+    - [요약](#요약)
+  - [Chrony 설치](#chrony-설치)
+    - [패키지 설치](#패키지-설치)
+    - [Chrony 설정](#chrony-설정)
+    - [방화벽 개방](#방화벽-개방)
+    - [수동 동기화](#수동-동기화)
+    - [동기화 상태 확인](#동기화-상태-확인)
+    - [하드웨어 클럭(HW clock)도 동기화](#하드웨어-클럭hw-clock도-동기화)
+  - [동기화 에러 확인 방법](#동기화-에러-확인-방법)
+    - [`/var/log/messages`의 동기화 관련 에러 메시지](#varlogmessages의-동기화-관련-에러-메시지)
+    - [로그로 확인이 안되는 경우](#로그로-확인이-안되는-경우)
+
 ## Cloudera CDP에서 Raft를 사용하는 Runtime Component
 
 * Cloudera CDP의 Runtime Component 중 Raft Algorithm을 기반으로 동작하는 컴포넌트가 존재함
