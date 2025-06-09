@@ -3,6 +3,7 @@
 ## 실행 프로세스
 
 | 구분 | 서비스 | 비고 |
+|-----|--------|------|
 | Cloudera Manager Server | Server | 최소 1개의 노드에 설치해야 하며 이중화가 가능하여 운영 안정화가 중요한 곳에서는 2개 설치 (L4 필요) | 
 | Cloudera Manager Agent | Agent <br/> Supervisor | 모든 노드는 Agent와 Supervisor가 동작 | 
 | Cloudera Management Service | Alert Publisher <br/> Event Server <br/> Host Monitor <br/> Reports Manager <br/> Service Monitor | Service Monitor 등의 메모리를 크게 사용하는 이유로 클러스터의 규모가 크거나, Kudu/Kafka 등 서비스를 많이 사용하는 경우 별도 노드로 분리 | 
