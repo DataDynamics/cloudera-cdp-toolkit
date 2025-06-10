@@ -205,6 +205,7 @@ log4j.appender.filteredlog.filter.2.AcceptOnMatch=false
 
 # === Accept all other messages ===
 log4j.appender.filteredlog.filter.3=org.apache.log4j.varia.AcceptAllFilter
+
 # === Specific logger for AgentProtocolImpl ===
 log4j.logger.com.cloudera.server.cmf.AgentProtocolImpl=WARN, filteredlog
 log4j.additivity.com.cloudera.server.cmf.AgentProtocolImpl=false
