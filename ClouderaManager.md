@@ -315,3 +315,52 @@ GRANT ALL PRIVILEGES ON DATABASE scm TO scm;
 ```
 sudo /opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm scm_password
 ```
+
+### Service Monitor 디스크 공간 초기화
+
+Service Monitor가 사용하는 디렉토리가 과도하게 큰 경우 다음의 커맨드로 완전히 삭제할 수 있습니다.
+다만, 이 경우 모든 시계열 데이터가 사라지므로 Cloudera Manager에서 차트가 모두 지워지게 됩니다.
+따라서 Service Monitor를 위한 큰 디스크 공간을 배정하고, `/var/lib/cloudera-service-monitor`의 모든 파일을 이동한 후에 삭제하도록 합니다.
+
+```
+rm -rf /var/lib/cloudera-service-monitor/*
+```
+
+### 메모리 공간 체크
+
+Service Monitor와 같은 CMS 서비스는 메모리를 많이 사용하므로 `top` 커맨드를 통해서 점유 메모리의 크기를 확인하도록 합니다.
+
+```
+top - 09:16:10 up 13 days, 23:34,  1 user,  load average: 0.04, 0.09, 0.18
+Tasks: 333 total,   2 running, 331 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  2.8 us,  0.9 sy,  0.0 ni, 95.8 id,  0.1 wa,  0.2 hi,  0.1 si,  0.1 st
+MiB Mem :  31164.7 total,    436.0 free,  16840.0 used,  13888.8 buff/cache
+MiB Swap:  20479.0 total,  20476.0 free,      3.0 used.  13733.4 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+   3297 clouder+  20   0   10.1g   4.0g 443604 S  15.3  13.0   2031:32 java
+   1005 root      20   0 2380840  85184  18180 S   9.3   0.3 218:55.19 cmagent
+   1076 clouder+  20   0   10.3g   5.8g  27924 S   3.0  18.9   1420:51 java
+   2156 root      20   0 5563000 102464  17144 S   1.3   0.3 227:44.60 python3.8
+   3332 clouder+  20   0 8356828   2.3g 494756 S   1.3   7.5 382:26.32 java
+   3273 clouder+  20   0 7375612   1.3g  51588 S   1.0   4.3  88:22.09 java
+   3252 clouder+  20   0 7123744   1.4g  19740 S   0.7   4.7  55:33.67 java
+... 생략
+```
+
+`top` 커맨드는 다음의 정보를 표시하며 이중에서 `RES` 항목에 집중하도록 합니다.
+
+| 컬럼          | 설명                                                                                                                                                                          |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PID**     | 프로세스 ID (Process ID)                                                                                                                                                        |
+| **USER**    | 프로세스를 실행한 사용자 이름                                                                                                                                                            |
+| **PR**      | 프로세스의 우선순위 (Priority) <br> 낮을수록 우선순위가 높음                                                                                                                                    |
+| **NI**      | nice 값 (Niceness) <br> -20(가장 높은 우선순위) \~ 19(가장 낮은 우선순위)                                                                                                                    |
+| **VIRT**    | 가상 메모리 사용량 (Virtual Memory) <br> 프로세스가 사용하거나 예약한 전체 메모리 (swap 포함)                                                                                                           |
+| **RES**     | 실제 메모리 사용량 (Resident Set Size) <br> 실제로 RAM에 올라가 있는 메모리                                                                                                                     |
+| **SHR**     | 공유 메모리 크기 (Shared Memory) <br> 다른 프로세스와 공유하는 라이브러리 등                                                                                                                        |
+| **S**       | 프로세스 상태 (State) <br> <ul><li>`R` = 실행 중(Running)</li><li>`S` = 슬립(Sleeping)</li><li>`D` = 디스크 I/O 대기</li><li>`Z` = 좀비(Zombie)</li><li>`T` = 일시 중지(Traced/Stopped)</li></ul> |
+| **%CPU**    | CPU 사용률 (%) <br> 단일 CPU 기준                                                                                                                                                  |
+| **%MEM**    | 물리 메모리(RAM) 사용률 (%)                                                                                                                                                         |
+| **TIME+**   | 누적 CPU 사용 시간 (초 단위 + 소수점: mm\:ss.hh)                                                                                                                                        |
+| **COMMAND** | 실행 중인 명령 또는 프로세스 이름 (경로 또는 커맨드라인 일부 포함 가능)                                                                                                                                  |
