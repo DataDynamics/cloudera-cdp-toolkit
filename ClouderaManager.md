@@ -249,6 +249,7 @@ CMS에서 가장 메모리 및 디스크 공간을 많이 사용하는 서비스
 Auto TLS를 적용하는 방법은 "Cloudera Manager > Administration > Enable Auto-TLS"를 통해서 가능하며 다음과 설정하도록 합니다.
 
 | 설정명 | 설정값 | 기본값 | 비고 | 
+|--------|-------|-------|------|
 | Trusted CA Certificated Location | | | 빈칸으로 놔두면 자동 생성. PEM Format의 CA 인증서를 제공할 수 있음 |
 | Enable TLS for | All existing and future clusters <br/>  | Future clusters only | 일반적으로 All existing and future clusters을 사용 |
 | SSH Username | | `root` | SSH Username |
