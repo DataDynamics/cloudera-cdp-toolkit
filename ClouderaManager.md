@@ -139,11 +139,11 @@ Cloudera Manager의 **supervisor**는 Cloudera Manager Agent 내부의 서브 �
 
 ### 서비스 관리 커맨드
 
-| 구분   | 재시작 커맨드  |                          |
+| 구분   | 재시작 커맨드  |  비고 |
 |--------|---------------| ------------------------ |
 | Server |  `systemctl restart cloudera-scm-server`  |  |
 | Agent |  `systemctl restart cloudera-scm-agent`  |  |
-| Supervisor |  `systemctl restart cloudera-scm-supervisord`  |  |
+| Supervisor |  `systemctl restart cloudera-scm-supervisord`  | 아주 특별한 경우를 제외하고 재시작할 필요는 없음 |
 
 ## Directory
 
@@ -261,3 +261,56 @@ Cloudera Manager Server의 웹 관리 콘솔에서 TLS를 활성화 하면 CM Se
 
 TLS를 활성화 하면 모든 서비스를 재시작해야 합니다.
 
+## 트러블 슈팅
+
+### CM Server 재설치시 GUID 이슈
+
+기존 클러스터에서 CM Server를 재설치하는 경우 GUID 변경에 따른 Agent 통신 이슈가 발생할 수 있으므로 다음과 같이 조치하도록 합니다.
+
+#### CM Server
+
+```
+systemctl stop cloudera-scm-server
+rm -rf /var/lib/cloudera-scm-server/*
+rm -rf /var/log/cloudera-scm-server/*
+```
+
+#### CM Agent
+
+```
+systemctl stop cloudera-scm-agent
+rm -rf /var/lib/cloudera-scm-agent/*
+rm -rf /var/run/cloudera-scm-agent/*
+rm -rf /var/log/cloudera-scm-agent/*
+```
+
+### CM DB 초기화
+
+다음과 같이 데이터베이스를 모두 삭제합니다.
+
+```
+# 예시
+sudo -u postgres psql -c "DROP DATABASE scm;"
+sudo -u postgres psql -c "DROP USER scm;"
+```
+
+다음과 같이 새로 데이터베이스를 생성합니다.
+
+```
+sudo -u postgres psql
+
+-- DB 생성
+CREATE DATABASE scm;
+
+-- 사용자 생성
+CREATE USER scm WITH PASSWORD 'scm_password';
+
+-- 권한 부여
+GRANT ALL PRIVILEGES ON DATABASE scm TO scm;
+```
+
+다음과 같이 데이터베이스를 초기화합니다.
+
+```
+sudo /opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm scm_password
+```
