@@ -1,6 +1,6 @@
-# Cloudera Manager Server & Agent
+# Cloudera Manager
 
-## 실행 프로세스
+## 주요 구성 요소
 
 | 구분 | 서비스 | 비고 |
 |-----|--------|------|
@@ -137,6 +137,14 @@ Cloudera Manager의 **supervisor**는 Cloudera Manager Agent 내부의 서브 �
 |  | 명령 실행      | 구성 변경, 롤링 재시작 등의 명령 수행        |
 |  | 시스템 안정성 유지 | 프로세스 감시 및 보안 설정 적용          |
 
+### 서비스 관리 커맨드
+
+| 구분   | 재시작 커맨드  |                          |
+|--------|---------------| ------------------------ |
+| Server |  `systemctl restart cloudera-scm-server`  |  |
+| Agent |  `systemctl restart cloudera-scm-agent`  |  |
+| Supervisor |  `systemctl restart cloudera-scm-supervisord`  |  |
+
 ## Directory
 
 ### Configuration Directory
@@ -159,7 +167,19 @@ Cloudera Manager의 **supervisor**는 Cloudera Manager Agent 내부의 서브 �
 
 ### Cloudera Manager Agent
 
-`/etc/cloudera-scm-agent`
+`/etc/cloudera-scm-agent/config.ini` 파일은 직접 수정할 수 있으며 그중 가장 중요한 정보는 다음가 같습니다.
+
+```
+[General]
+# Hostname of the CM server.
+server_host=10.0.1.60
+
+# Port that the CM server is listening on.
+server_port=7182
+... 생략
+```
+
+ `server_host`는 Cloudera Manager Server의 IP 주소로서 Cloudera Manager Server가 이중화 되어 있는 경우 L4 Swich의 IP 주소를 기입합니다. `server_port` 또한 Cloudera Manager Server가 이중화 되어 있는 경우 L4 Switch의 포트를 기입합니다.
 
 ## Logging
 
@@ -224,14 +244,20 @@ CMS에서 가장 메모리 및 디스크 공간을 많이 사용하는 서비스
 | Java Heap Size of Service Monitor in Bytes | 1 GB (Default) | Java Heap Size로 -Xmx 옵션 |
 | Maximum Non-Java Memory of Service Monitor | 2 GB (Default) | JVM 외부의 native code나 라이브러리(C/C++ 등), memory-mapped files, threads, buffers, JIT 컴파일러, JNI 등이 사용하는 메모리 |
 
+## TLS 활성화
 
+Auto TLS를 적용하는 방법은 "Cloudera Manager > Administration > Enable Auto-TLS"를 통해서 가능하며 다음과 설정하도록 합니다.
 
+| 설정명 | 설정값 | 기본값 | 비고 | 
+| Trusted CA Certificated Location | | | 빈칸으로 놔두면 자동 생성. PEM Format의 CA 인증서를 제공할 수 있음 |
+| Enable TLS for | All existing and future clusters <br/>  | Future clusters only | 일반적으로 All existing and future clusters을 사용 |
+| SSH Username | | `root` | SSH Username |
+| Authentication Method | All hosts accept same password <br/> All hosts accept same private key | All hosts accept same password | |
+| Password | | | `root`의 패스워드 |
+| Confirm Password | | | `root`의 패스워드 |
+| SSH Port | | `22` | SSH Port |
 
+Cloudera Manager Server의 웹 관리 콘솔에서 TLS를 활성화 하면 CM Server가 CA가 되며, CM Server와 CM Agent는 TLS 통신을 하게 됩니다.
 
-
-
-
-
-
-
+TLS를 활성화 하면 모든 서비스를 재시작해야 합니다.
 
