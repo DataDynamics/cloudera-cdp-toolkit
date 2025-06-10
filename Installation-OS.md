@@ -30,4 +30,10 @@ SELINUX=disabled
 
 ## SWAP
 
+TBD
+
 ## 트러블 슈팅
+
+### SWAP 초기화
+
+TBD
